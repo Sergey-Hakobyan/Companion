@@ -7,15 +7,18 @@
 }
 
 .header{
+  position: fixed;
   width: 95%;
   height: 70px;
   margin-top: 10px;
   display: flex;
   align-items: center;
-  background-color: grey;
   box-shadow: 0 0 10px black;
   border: 1px solid grey;
   border-radius:15px;
+  z-index:199;
+  background-color: #9E9E9E;
+  transition: background-color 0.5s ease;
 }
 
 .shiftchanger{
@@ -29,57 +32,118 @@
   height: 50px;
   background-color: #eee4e4;
   cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+.langIcon{
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  cursor: pointer;
+  border: 1px rgb(105, 105, 105) solid;
+  transition: background-color 0.3s ease;
 }
 
+.langIcon:hover{
+  background-color: rgb(52, 52, 52);
+}
 
+.descNameDiv{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 150px;
+  width: 600px;
+  height: 300px;
+  overflow: hidden;
+  transition: height 1s ease-out,
+              opacity 1s ease-out;
+
+}
+.closeDiv{
+  height: 0;
+  opacity: 0;
+}
 
 .name{
-  padding-top: 70px;
-  font-size: 50px;
+  font-size: 70px;
+  font-weight: 700;
+  margin-top: 0;
   opacity: 0;
   animation: slideDown 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: color 0.5s ease;
 }
 .desc{
-    margin-top:10px;
     font-size: 20px;
     opacity: 0;
-  animation: slideDown2 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideDown2 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: color 0.5s ease;
 }
+
+.sendingDiv {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-left: 120px;
+  width: 780px;
+  transition: transform 0.6s ease;
+}
+
+.sendDown{
+  margin-top: 200px;
+  width: 200px;
+}
+
 .textarea {
-  width: 60%;
-  height: 180px;
-  margin-top:70px;
+  width: 650px;
+  height: 150px;
+  margin-left: auto;
   background: grey;
   border: 1px solid grey;
   border-radius: 12px;
   color: #e0e0e0;
-  font-size: 15px;
+  font-size: 17px;
   padding: 16px;
-  /* box-shadow: 0 0 10px black; */
   outline: none;
-  transition: box-shadow 0.1s ease;
+  resize: none;
+  overflow: hidden;
+  transition: box-shadow 0.1s ease, width 0.6s ease, height 0.6s ease, background 0.5s ease;
 }
 .textarea:focus {
   box-shadow: 0 0 10px black;
 }
 
 .button {
-  width: 300px;
+  width: 100px;
+  height: 50px;
   background-color: grey;
-  margin-top: 20px;
   color: #000000;
-  border: none;
-  border-radius: 10px;
-  padding: 14px;
+  margin-left: 14px;
   font-size: 20px;
   font-weight: 600;
   cursor: pointer;
-  border:none;
-  transition:
-  opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-  transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-  box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-  color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid grey;
+  border-radius: 15px;
+  transition: 
+          opacity 0.4s ease, 
+          transform 0.6s ease, 
+          box-shadow 0.2s ease,
+          color 0.5s ease, 
+          background-color 0.5s ease;
+}
+.showButton {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.hideButton {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
 }
 
 .button:hover{
@@ -92,16 +156,51 @@
   cursor: not-allowed;
 }
 
-.showButton {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+
+.output {
+  width: 800px;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 15px;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  word-break: break-word;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: background-color 0.5s ease,    
+              max-height 1.5s ease,
+              opacity 0.6s ease;
 }
 
-.hideButton {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
+
+.outputVisible {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.error{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(206, 0, 0);
+  background-color: rgb(104, 0, 0);
+
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  width: 400px;
+  min-width: 100px;
+  height: 50px;
+  min-height: 3px;
+
+  position: absolute;
+  top: 100px;
+  right: 30px;
+  border-radius: 15px;
+}
+.disappear{
+  display: none;
 }
 
 @keyframes slideDown {
@@ -128,18 +227,3 @@
   }
 }
 
-.output {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 800px;
-  margin-top:60px;
-  background: #780909;
-  border: 1px solid #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  font-size: 20px;
-  font-weight: 500;
-  white-space: pre-wrap;
-  color: #ffffff;
-} 

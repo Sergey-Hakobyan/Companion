@@ -1,52 +1,67 @@
-import { useState } from 'react'
-const express = require('express')
-const Anthropic = require('@anthropic-ai/sdk')
-const cors = require('cors')
+import express from 'express'
+import cors from 'cors'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import dotenv from 'dotenv'
+dotenv.config()
 
+const apiKey = process.env.GEMINI_API_KEY
 const app = express()
-const anthropic = new Anthropic({ apiKey: 'ТВОЙ_КЛЮЧ' })
 
-const {mode, setMode} = useState(0);
+const genAI = new GoogleGenerativeAI(apiKey)
 
 app.use(cors())
 app.use(express.json())
 
-const SYSTEM_PROMPT = `You are a study assistant. Make your explanations clean andeasy to understand
-Create notes strictly in the following format:
+const SYSTEM_PROMPT = `
+You are a study assistant.
 
-WHAT THE EXCERPT IS ABOUT
-IMPORTANT NUANCES
-TOPIC INTRODUCTION
-TOPIC EXPLANATION
-LIKELY QUESTIONS
-ULTRA-SHORT SUMMARY`
+Make explanations clean and easy to understand.
+
+Create notes STRICTLY in this format:
+
+1. WHAT THE EXCERPT IS ABOUT
+2. IMPORTANT NUANCES
+3. TOPIC INTRODUCTION
+4. TOPIC EXPLANATION
+5. LIKELY QUESTIONS
+6. ULTRA-SHORT SUMMARY
+`
 
 app.post('/conspect', async (req, res) => {
   const { text } = req.body
-  if (!text) return res.status(400).json({ error: 'Текст не передан' })
 
-  res.setHeader('Content-Type', 'text/event-stream')
-  res.setHeader('Cache-Control', 'no-cache')
-  res.setHeader('Connection', 'keep-alive')
-
-  try {
-    const stream = await anthropic.messages.stream({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 2000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: `Текст:\n\n${text}` }]
+  if (!text) {
+    return res.status(400).json({
+      error: 'Text not provided'
     })
-
-    for await (const chunk of stream) {
-      const chunkText = chunk.delta?.text
-      if (chunkText) res.write(chunkText)
-    }
-  } catch (err) {
-    console.error(err)
-    res.write('\n[Ошибка]')
   }
 
-  res.end()
+  try {
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash'
+    })
+
+    const result = await model.generateContent(`
+${SYSTEM_PROMPT}
+
+Text:
+
+${text}
+`)
+
+    const answer = result.response.text()
+
+    res.send(answer)
+
+  } catch (err) {
+  console.error(err)
+
+  res.status(500).json({
+    error: err.message
+  })
+}
 })
 
-app.listen(3000, () => console.log('Сервер на http://localhost:3000'))
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000')
+})
