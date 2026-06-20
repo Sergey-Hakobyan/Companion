@@ -7,10 +7,12 @@ dotenv.config()
 const apiKey = process.env.GEMINI_API_KEY
 const app = express()
 
+
 const genAI = new GoogleGenerativeAI(apiKey)
 
 app.use(cors())
 app.use(express.json())
+
 
 const SYSTEM_PROMPT = `
 You are a study assistant.

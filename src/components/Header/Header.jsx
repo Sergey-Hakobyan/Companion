@@ -1,18 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './header.module.css'
 import clsx from 'clsx'
-
+import arb from '../../assets/imgs/arb.svg'
+import arm from '../../assets/imgs/arm.svg'
+import fr from '../../assets/imgs/fr.svg'
+import ru from '../../assets/imgs/ru.svg'
+import spa from '../../assets/imgs/spa.svg'
 
 const Header = () => {
   const [text, setText] = useState('')
   const [result, setResult] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [lang, setLang] = useState(0);
+  const [lang, setLang] = useState('en');
+  const [langState, setLangState] = useState(false)
   const [shift, setShift] = useState(1);
   const [chatStarted, setChatStarted] = useState(false);
   const [showOutput, setShowOutput] = useState(false) 
   const [showText, setShowText] = useState(false)
+  const [responseReady, setResponseReady] = useState(false)
 
 
   const moon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#000000">
@@ -34,22 +40,29 @@ const Header = () => {
                 <path d="M2.62964 8.5H21.3704" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
 
-  async function getConspect() {
-    if (!text.trim()) return
-
-    setResult('')
-    setLoading(true)
-    text.trim()
-  setChatStarted(true)
+useEffect(() => {
+  if (!responseReady) return
 
   setTimeout(() => {
     setShowOutput(true)
 
     setTimeout(() => {
       setShowText(true)
-    }, 600)
+    }, 800)
 
-  }, 500)
+  }, 300)
+}, [responseReady])
+
+  async function getConspect() {
+    if (!text.trim()) return
+
+    setResult('')
+    setLoading(true)
+    text.trim()
+    setChatStarted(true)
+    setResponseReady(false)
+    setShowOutput(false)
+    setShowText(false)
 
     try {
       const response = await fetch('http://localhost:3000/conspect', {
@@ -65,7 +78,11 @@ const Header = () => {
 
       while (true) {
         const { done, value } = await reader.read()
-        if (done) break
+
+        if (done) {
+          setResponseReady(true)
+          break
+        }
         const chunk = decoder.decode(value)
         setResult(prev => prev + chunk)
       }
@@ -93,10 +110,19 @@ const Header = () => {
                         }>
                         {shift ? moon : sun}
                   </div>
-
-                  <div className = {styles.langIcon}>
-                      {langIcon}
-                  </div>
+                      <div className = {clsx( styles.langIcon, langState && styles.langIconOpen)}
+                          onClick={() => setLangState(!langState)}>
+                              {langIcon}
+                            <div className={clsx( styles.langMenu, !langState && styles.langClose )}
+                              style={{ backgroundColor: shift ? '#9E9E9E' : '#212121' }}
+                            >
+                                  <div className={styles.flag} onClick={()=>{setLang('fr')}}> <img src = {fr} alt = 'FR'/> </div>
+                                  <div className={styles.flag} onClick={()=>{setLang('ru')}}> <img src = {ru} alt = 'RU'/> </div>
+                                  <div className={styles.flag} onClick={()=>{setLang('arm')}}> <img src = {arm} alt = 'ARM'/> </div>
+                                  <div className={styles.flag} onClick={()=>{setLang('arb')}}> <img src = {arb} alt = 'ARB'/> </div>
+                                  <div className={styles.flag} onClick={()=>{setLang('spa')}}> <img src = {spa} alt = 'SPA'/> </div>
+                            </div>
+                    </div>
           </div>
               {error && (
                   <div className={styles.error}>
@@ -119,7 +145,6 @@ const Header = () => {
 
                 </div>
 
-
             {showOutput && (
               <div
                 className={clsx(
@@ -131,9 +156,10 @@ const Header = () => {
                 {showText && result}
               </div>
             )}
+            
         <div className={clsx(styles.sendingDiv)}>
           <textarea
-            className={clsx(styles.textarea, chatStarted && !error && styles.textareaActive)}
+            className={clsx(styles.textarea, chatStarted && !error && showText && styles.TareaDec)}
             placeholder="Enter your text here..."
             value={text}
             style={{ background: shift ? '#9E9E9E' : '#212121' }}
