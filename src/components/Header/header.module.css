@@ -46,24 +46,10 @@
   height: 50px;
   background-color: transparent;
   cursor: pointer;
-  
-  border: 1px rgb(105, 105, 105) solid;
   transition: background-color 0.3s ease,
   border-bottom 0.3s ease;
 }
 
-.langIconOpen{
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom: none;
-
-
-}
-
-.langIcon:hover{
-  background-color: rgb(52, 52, 52);
-  
-}
 
 .langMenu {
   position: absolute;
@@ -71,8 +57,8 @@
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  top: 40px;
-  right: -1.25px;
+  top: 60px;
+  right: 0;
   display: flex;
   flex-direction: column;
   width: 50px;
@@ -85,6 +71,7 @@
   border-top: none;
   transition: height 0.3s ease,
               opacity 0.3s ease,
+              background-color 0.3s,
               transform 0.3s ease;
 }
 
@@ -95,11 +82,16 @@
 }
 
 .flag{
-  cursor:pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 40px;
+  height: 40px;
   padding-top: 3px;
+  border-radius: 10px;
+  cursor:pointer;
+  transition: background-color 0.3s ease;
 }
-
 
 .descNameDiv{
   display: flex;
@@ -129,6 +121,9 @@
 .desc{
     font-size: 20px;
     opacity: 0;
+    text-align: center;
+    line-height: 1.4;
+    min-height: 40px;
     animation: slideDown2 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transition: color 0.5s ease;
 }
@@ -139,7 +134,7 @@
   margin-top: 30px;
   margin-left: 120px;
   width: 780px;
-  transition: transform 0.6s ease;
+  transition: transform 1.6s ease;
 }
 
 .sendDown{
@@ -150,7 +145,7 @@
 .textarea {
   width: 650px;
   height: 150px;
-  margin-left: auto;
+  margin-left: 0;
   background: grey;
   border: 1px solid grey;
   border-radius: 12px;
@@ -160,7 +155,7 @@
   outline: none;
   resize: none;
   overflow: hidden;
-  transition: box-shadow 0.1s ease, width 0.6s ease, height 1 ease, background 0.5s ease;
+  transition: box-shadow 0.1s ease, width 0.6s ease, height 0.6s ease, background 0.5s ease;
 }
 .textarea:focus {
   box-shadow: 0 0 10px black;
@@ -170,8 +165,9 @@
   height: 60px;
 }
 
+
 .button {
-  width: 100px;
+  min-width: 100px;
   height: 50px;
   background-color: grey;
   color: #000000;
@@ -217,19 +213,19 @@
   border-radius: 15px;
   white-space: pre-wrap;
   line-height: 1.7;
-  padding:15px;
   word-break: break-word;
   overflow: hidden;
   max-height: 0;
   opacity: 0;
   transition: background-color 0.5s ease,    
-              max-height 1.5s ease,
+              max-height 15s ease,
               opacity 0.6s ease;
 }
 
 
 .outputVisible {
-  max-height: 1000px;
+  max-height: 10000px;
+  padding: 15px;
   opacity: 1;
 }
 

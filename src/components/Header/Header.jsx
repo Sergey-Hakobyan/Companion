@@ -6,6 +6,7 @@ import arm from '../../assets/imgs/arm.svg'
 import fr from '../../assets/imgs/fr.svg'
 import ru from '../../assets/imgs/ru.svg'
 import spa from '../../assets/imgs/spa.svg'
+import en from '../../assets/imgs/us.svg'
 
 const Header = () => {
   const [text, setText] = useState('')
@@ -19,8 +20,60 @@ const Header = () => {
   const [showOutput, setShowOutput] = useState(false) 
   const [showText, setShowText] = useState(false)
   const [responseReady, setResponseReady] = useState(false)
+  const [messages, setMessages] = useState([])
 
 
+  const translations = {
+    en: {
+      name: 'Companión',
+      desc: 'Make your learning process easier - just paste that text here',
+      placeholder: 'Enter your text here...',
+      send: 'Send',
+      error: 'Connection error'
+    },
+
+    ru: {
+      name: 'Companión',
+      desc: 'Сделай обучение проще — просто вставь сюда текст',
+      placeholder: 'Введите текст...',
+      send: 'Отправить',
+      error: 'Ошибка соединения с сервером'
+    },
+    arm: {
+      name: 'Companión',
+      desc: 'Հեշտացրու ուսուցման գործընթացը՝ պարզապես տեղադրիր քո տեքստը այստեղ',
+      placeholder: 'Մուտքագրիր քո տեքստը այստեղ...',
+      send: 'Ուղարկել',
+      error: 'Սերվերի հետ կապի սխալ'
+      },
+
+    fr: {
+      name: 'Companión',
+      desc: 'Rendez votre apprentissage plus facile — collez simplement votre texte ici',
+      placeholder: 'Entrez votre texte...',
+      send: 'Envoyer',
+      error: 'Erreur de connexion au serveur'
+    },
+
+    spa: {
+      name: 'Companión',
+      desc: 'Haz que tu proceso de aprendizaje sea más fácil: simplemente pega tu texto aquí',
+      placeholder: 'Introduce tu texto aquí...',
+      send: 'Enviar',
+      error: 'Error de conexión con el servidor'
+    },
+
+    arb: {
+      name: 'Companión',
+      desc: 'اجعل عملية التعلم أسهل — فقط الصق النص هنا',
+      placeholder: 'أدخل النص هنا...',
+      send: 'إرسال',
+      error: 'خطأ في الاتصال بالخادم'
+    },
+}
+const flags = { en, ru, fr, arm, arb, spa }
+
+  const t = translations[lang]
   const moon = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#000000">
                 <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243
                  0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.
@@ -55,6 +108,13 @@ useEffect(() => {
 
   async function getConspect() {
     if (!text.trim()) return
+      setMessages(prev => [
+    ...prev,
+    {
+      role: 'user',
+      content: text
+    }
+])
 
     setResult('')
     setLoading(true)
@@ -110,18 +170,31 @@ useEffect(() => {
                         }>
                         {shift ? moon : sun}
                   </div>
-                      <div className = {clsx( styles.langIcon, langState && styles.langIconOpen)}
-                          onClick={() => setLangState(!langState)}>
-                              {langIcon}
-                            <div className={clsx( styles.langMenu, !langState && styles.langClose )}
-                              style={{ backgroundColor: shift ? '#9E9E9E' : '#212121' }}
+                    <div
+                      className={clsx(styles.langIcon, langState && styles.langIconOpen)}
+                      onClick={() => setLangState(!langState)}
+                    >
+                      <img src={flags[lang]} alt={lang} />
+
+                      <div
+                        className={clsx(styles.langMenu, !langState && styles.langClose)}
+                        style={{ backgroundColor: shift ? '#9E9E9E' : '#212121' }}
+                      >
+                        {Object.entries(flags)
+                          .filter(([code]) => code !== lang)
+                          .map(([code, flag]) => (
+                            <div
+                              key={code}
+                              className={styles.flag}
+                              onClick={() => {
+                                setLang(code)
+                                setLangState(false)
+                              }}
                             >
-                                  <div className={styles.flag} onClick={()=>{setLang('fr')}}> <img src = {fr} alt = 'FR'/> </div>
-                                  <div className={styles.flag} onClick={()=>{setLang('ru')}}> <img src = {ru} alt = 'RU'/> </div>
-                                  <div className={styles.flag} onClick={()=>{setLang('arm')}}> <img src = {arm} alt = 'ARM'/> </div>
-                                  <div className={styles.flag} onClick={()=>{setLang('arb')}}> <img src = {arb} alt = 'ARB'/> </div>
-                                  <div className={styles.flag} onClick={()=>{setLang('spa')}}> <img src = {spa} alt = 'SPA'/> </div>
+                              <img src={flag} alt={code} />
                             </div>
+                          ))}
+                      </div>
                     </div>
           </div>
               {error && (
@@ -135,12 +208,20 @@ useEffect(() => {
                 <h1 className = {clsx(styles.name)}
                   style={{color: shift ? 'black' : 'white',}}
                   >
-                Companión
+                 {t.name}
               </h1>
               <h1 className = {clsx(styles.desc)}
-                style={{color: shift ? 'black' : 'white'}}
+                style={{color: shift ? 'black' : 'white', 
+                        fontSize:
+                          lang === 'arm' ||
+                          lang === 'fr' ||
+                          lang === 'spa' ||
+                          lang === 'arb'
+                            ? '17px'
+                            : '20px'
+                        }}
                 > 
-                  Make your learning process easier - just paste that text here
+                  {t.desc}
               </h1>
 
                 </div>
@@ -156,27 +237,34 @@ useEffect(() => {
                 {showText && result}
               </div>
             )}
+            {/* <div className={styles.chat}>
+              {messages.map((message, index) => (
+                <div key={index}>
+                  {message.content}
+                </div>
+              ))}
+            </div> */}
             
-        <div className={clsx(styles.sendingDiv)}>
-          <textarea
-            className={clsx(styles.textarea, chatStarted && !error && showText && styles.TareaDec)}
-            placeholder="Enter your text here..."
-            value={text}
-            style={{ background: shift ? '#9E9E9E' : '#212121' }}
-            onChange={e => setText(e.target.value)}
-          />
-          <button
-            className={clsx(
-              styles.button,
-              !text.trim() && styles.hideButton,
-              text.trim() && styles.showButton
-            )}
-            style={{ backgroundColor: shift ? '#9E9E9E' : '#212121', color: shift ? 'black' : 'white' }}
-            onClick={() => { getConspect() }}
-            disabled={loading}
-          >
-            {loading ? 'Sending...' : 'Send'}
-          </button>
+          <div className={clsx(styles.sendingDiv)}>
+                <textarea
+                  className={clsx(styles.textarea, chatStarted && !error && showText && styles.TareaDec)}
+                  placeholder={t.placeholder}
+                  value={text}
+                  style={{ background: shift ? '#9E9E9E' : '#212121' }}
+                  onChange={e => setText(e.target.value)}
+                />
+                <button
+                  className={clsx(
+                    styles.button,
+                    !text.trim() && styles.hideButton,
+                    text.trim() && styles.showButton
+                  )}
+                  style={{ backgroundColor: shift ? '#9E9E9E' : '#212121', color: shift ? 'black' : 'white' }}
+                  onClick={() => { getConspect() }}
+                  disabled={loading}
+                >
+                  {loading ? 'Sending...' : t.send}
+                </button>
         </div>
 
       </section>
